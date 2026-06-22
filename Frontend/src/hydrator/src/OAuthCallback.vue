@@ -42,6 +42,8 @@ const handleCallback = async () => {
   const state = urlParams.get('state');
   const errorParam = urlParams.get('error');
 
+  console.log('OAuth Callback:', { code, state, error: errorParam });
+
   if (errorParam) {
     processing.value = false;
     error.value = true;
@@ -57,6 +59,7 @@ const handleCallback = async () => {
   }
 
   try {
+    console.log('Calling backend callback...');
     const response = await fetch('http://localhost:8000/client-public/api/i/ona/xshop', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -64,21 +67,28 @@ const handleCallback = async () => {
     });
 
     const data = await response.json();
+    console.log('Backend response:', data);
 
     if (data.status === 'success' && data.output.access_token) {
+      console.log('Token received, saving...');
       localStorage.setItem('access_token', data.output.access_token);
       if (data.output.refresh_token) {
         localStorage.setItem('refresh_token', data.output.refresh_token);
       }
+      console.log('Tokens saved:', { 
+        access: !!localStorage.getItem('access_token'),
+        refresh: !!localStorage.getItem('refresh_token')
+      });
 
       processing.value = false;
       success.value = true;
 
       setTimeout(() => {
-        navigate('/xshop');
-      }, 2000);
+        console.log('Redirecting to dashboard...');
+        window.location.href = '/xshop';
+      }, 1000);
     } else {
-      throw new Error(data.message || 'Authentication failed');
+      throw new Error(data.detail || data.message || 'Authentication failed');
     }
   } catch (err: any) {
     console.error('OAuth callback error:', err);

@@ -50,17 +50,10 @@ const {_p, _pp} = defineProps<{
 const isAuthenticated = ref(false);
 const currentRoute = ref('login');
 
-// Check authentication - TEMPORARILY DISABLED FOR TESTING
+// Check authentication
 const checkAuth = () => {
   const token = localStorage.getItem('access_token');
   isAuthenticated.value = !!token;
-  
-  // TESTING MODE: Always set authenticated as true if token exists OR if on any xshop route
-  const path = window.location.pathname;
-  if (path.includes('/xshop') && !path.includes('/login')) {
-    isAuthenticated.value = true; // Force authentication for testing
-  }
-  
   console.log('Auth check:', { token: !!token, isAuth: isAuthenticated.value, route: currentRoute.value });
 };
 
