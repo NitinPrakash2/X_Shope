@@ -3,7 +3,7 @@
     <div class="auth-card">
       <div class="logo-section">
         <div class="logo-icon">
-          <ShoppingBag :size="40" />
+          <ShoppingBag :size="36" />
         </div>
         <h1 class="logo-title">X Shop</h1>
         <p class="tagline">Sell products on X (Twitter)</p>
@@ -34,7 +34,7 @@
     <div class="features-grid">
       <div class="feature-card">
         <div class="feature-icon purple">
-          <Zap :size="24" />
+          <Zap :size="22" />
         </div>
         <h3 class="feature-title">Instant Setup</h3>
         <p class="feature-desc">Connect and start selling in minutes</p>
@@ -42,7 +42,7 @@
 
       <div class="feature-card">
         <div class="feature-icon blue">
-          <TrendingUp :size="24" />
+          <TrendingUp :size="22" />
         </div>
         <h3 class="feature-title">Reach Millions</h3>
         <p class="feature-desc">Access X's massive user base</p>
@@ -50,7 +50,7 @@
 
       <div class="feature-card">
         <div class="feature-icon green">
-          <RefreshCw :size="24" />
+          <RefreshCw :size="22" />
         </div>
         <h3 class="feature-title">Auto Sync</h3>
         <p class="feature-desc">Products sync automatically</p>
@@ -93,6 +93,8 @@ const connectWithX = async () => {
 </script>
 
 <style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
 .auth-container {
   min-height: 100vh;
   display: flex;
@@ -100,18 +102,19 @@ const connectWithX = async () => {
   align-items: center;
   justify-content: center;
   padding: 40px 20px;
-  background: #f9fafb;
+  background: #fcfcfd;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
   gap: 40px;
 }
 
 .auth-card {
-  background: white;
-  border: 1px solid #e5e7eb;
-  border-radius: 16px;
+  background: #ffffff;
+  border: 1px solid #f1f5f9;
+  border-radius: 20px;
   padding: 48px 40px;
-  max-width: 440px;
+  max-width: 420px;
   width: 100%;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02), 0 4px 12px rgba(0, 0, 0, 0.04);
 }
 
 .logo-section {
@@ -120,11 +123,11 @@ const connectWithX = async () => {
 }
 
 .logo-icon {
-  width: 64px;
-  height: 64px;
-  background: #4f46e5;
-  color: white;
-  border-radius: 14px;
+  width: 60px;
+  height: 60px;
+  background: #111827;
+  color: #ffffff;
+  border-radius: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -132,14 +135,15 @@ const connectWithX = async () => {
 }
 
 .logo-title {
-  font-size: 32px;
+  font-size: 30px;
   font-weight: 800;
   margin: 0 0 6px 0;
-  color: #111827;
+  color: #0f172a;
+  letter-spacing: -0.02em;
 }
 
 .tagline {
-  color: #6b7280;
+  color: #64748b;
   font-size: 14px;
   margin: 0;
 }
@@ -149,14 +153,14 @@ const connectWithX = async () => {
 }
 
 .section-title {
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 700;
   margin: 0 0 6px 0;
-  color: #111827;
+  color: #0f172a;
 }
 
 .section-description {
-  color: #6b7280;
+  color: #64748b;
   font-size: 13px;
   margin: 0 0 24px 0;
 }
@@ -168,38 +172,43 @@ const connectWithX = async () => {
   justify-content: center;
   gap: 10px;
   padding: 14px 24px;
-  border: none;
-  background: #000;
-  color: white;
+  border: 1px solid transparent;
+  background: #111827;
+  color: #ffffff;
   border-radius: 10px;
   cursor: pointer;
   font-weight: 600;
   font-size: 15px;
-  transition: all 0.2s;
+  font-family: inherit;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .connect-btn:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  background: #1f2937;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .connect-btn:disabled {
-  opacity: 0.7;
+  opacity: 0.6;
   cursor: not-allowed;
+  transform: none;
 }
 
 .error-message {
   margin-top: 16px;
   padding: 12px;
-  background: #fee2e2;
+  background: #fff1f2;
   border: 1px solid #fecaca;
-  border-radius: 8px;
-  color: #991b1b;
+  border-radius: 10px;
+  color: #e11d48;
   font-size: 13px;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
+  font-weight: 500;
 }
 
 .security-note {
@@ -208,10 +217,11 @@ const connectWithX = async () => {
   justify-content: center;
   gap: 8px;
   padding: 12px;
-  background: #f9fafb;
-  border-radius: 8px;
+  background: #f8fafc;
+  border: 1px solid #f1f5f9;
+  border-radius: 10px;
   margin-top: 16px;
-  color: #6b7280;
+  color: #64748b;
   font-size: 12px;
 }
 
@@ -231,53 +241,47 @@ const connectWithX = async () => {
 }
 
 .feature-card {
-  background: white;
-  border: 1px solid #e5e7eb;
-  padding: 24px 20px;
-  border-radius: 12px;
+  background: #ffffff;
+  border: 1px solid #f1f5f9;
+  padding: 28px 20px;
+  border-radius: 16px;
   text-align: center;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-  transition: all 0.2s;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .feature-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-color: #e2e8f0;
+  box-shadow: 0 12px 24px -8px rgba(0, 0, 0, 0.06), 0 4px 6px -2px rgba(0, 0, 0, 0.03);
 }
 
 .feature-icon {
-  width: 56px;
-  height: 56px;
-  border-radius: 12px;
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
   display: flex;
   align-items: center;
   justify-content: center;
   margin: 0 auto 16px;
-  color: white;
+  color: #ffffff;
 }
 
-.feature-icon.purple {
-  background: #4f46e5;
-}
-
-.feature-icon.blue {
-  background: #3b82f6;
-}
-
-.feature-icon.green {
-  background: #10b981;
-}
+.feature-icon.purple { background: #4f46e5; }
+.feature-icon.blue { background: #3b82f6; }
+.feature-icon.green { background: #10b981; }
 
 .feature-title {
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 700;
   margin: 0 0 6px 0;
-  color: #111827;
+  color: #0f172a;
 }
 
 .feature-desc {
   font-size: 13px;
-  color: #6b7280;
+  color: #64748b;
   margin: 0;
+  line-height: 1.5;
 }
 </style>

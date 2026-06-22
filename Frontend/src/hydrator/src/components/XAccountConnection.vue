@@ -1,6 +1,5 @@
 <template>
   <div class="page-container">
-    <!-- Header -->
     <div class="header">
       <div class="header-content">
         <div>
@@ -15,21 +14,19 @@
       <ErrorState v-else-if="error" :message="error" :showRetry="true" @retry="loadStatus" />
 
       <div v-else class="account-content">
-        <!-- Not Connected State -->
         <div v-if="!accountStatus.is_connected" class="connect-card">
           <div class="connect-icon">
             <Twitter :size="48" />
           </div>
           <h2 class="connect-title">Connect Your X Account</h2>
           <p class="connect-description">Link your X (Twitter) account to start publishing products and reaching millions of customers.</p>
-          <button @click="connectAccount" :disabled="connecting" class="connect-btn">
+          <button @click="connectAccount" :disabled="connecting" class="primary-btn">
             <Loader2 v-if="connecting" :size="20" class="animate-spin" />
             <Twitter v-else :size="20" />
             {{ connecting ? 'Connecting...' : 'Connect X Account' }}
           </button>
         </div>
 
-        <!-- Connected State -->
         <div v-else class="connected-container">
           <div class="profile-card">
             <div class="profile-header">
@@ -42,7 +39,7 @@
                 <p class="profile-username">@{{ accountStatus.username || 'unknown' }}</p>
               </div>
               <div class="profile-badge">
-                <CheckCircle2 :size="24" />
+                <CheckCircle2 :size="20" />
                 <span>Connected</span>
               </div>
             </div>
@@ -55,6 +52,7 @@
                   <p class="stat-label">Followers</p>
                 </div>
               </div>
+              <div class="stat-divider"></div>
               <div class="stat-item">
                 <UserPlus :size="20" />
                 <div>
@@ -79,8 +77,8 @@
             </div>
           </div>
 
-          <button @click="showDisconnectModal = true" class="disconnect-btn">
-            <XCircle :size="20" />
+          <button @click="showDisconnectModal = true" class="danger-btn">
+            <XCircle :size="18" />
             Disconnect X Account
           </button>
         </div>
@@ -93,7 +91,7 @@
       message="This will remove the connection to your X account. You'll need to reconnect to publish products."
       confirmText="Disconnect"
       cancelText="Cancel"
-      confirmClass="bg-red-600 text-white hover:bg-red-700"
+      confirmClass="danger"
       @confirm="disconnectAccount"
       @cancel="showDisconnectModal = false"
     />
@@ -174,18 +172,24 @@ onMounted(() => loadStatus())
 </script>
 
 <style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
 .page-container {
   min-height: 100vh;
-  background: #f9fafb;
+  background: #fcfcfd;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  color: #111827;
 }
 
 .header {
-  background: white;
-  border-bottom: 1px solid #e5e7eb;
-  padding: 20px 32px;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid #f3f4f6;
+  padding: 24px 32px;
   position: sticky;
   top: 0;
-  z-index: 10;
+  z-index: 20;
 }
 
 .header-content {
@@ -194,22 +198,24 @@ onMounted(() => loadStatus())
 }
 
 .page-title {
-  font-size: 28px;
+  font-size: 24px;
   font-weight: 700;
-  color: #111827;
-  margin: 0 0 4px 0;
+  color: #0f172a;
+  margin: 0 0 6px 0;
+  letter-spacing: -0.02em;
 }
 
 .page-subtitle {
   font-size: 14px;
-  color: #6b7280;
+  color: #64748b;
   margin: 0;
+  font-weight: 400;
 }
 
 .content-wrapper {
   max-width: 800px;
   margin: 0 auto;
-  padding: 32px;
+  padding: 40px 32px;
 }
 
 .account-content {
@@ -219,19 +225,20 @@ onMounted(() => loadStatus())
 }
 
 .connect-card {
-  background: white;
-  border: 1px solid #e5e7eb;
-  border-radius: 12px;
+  background: #ffffff;
+  border: 1px solid #f1f5f9;
+  border-radius: 16px;
   padding: 48px 32px;
   text-align: center;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02), 0 1px 2px rgba(0, 0, 0, 0.01);
 }
 
 .connect-icon {
   width: 80px;
   height: 80px;
-  background: #dbeafe;
-  color: #2563eb;
-  border-radius: 16px;
+  background: #eef2ff;
+  color: #4f46e5;
+  border-radius: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -239,15 +246,16 @@ onMounted(() => loadStatus())
 }
 
 .connect-title {
-  font-size: 24px;
+  font-size: 22px;
   font-weight: 700;
-  color: #111827;
+  color: #0f172a;
   margin: 0 0 12px 0;
+  letter-spacing: -0.02em;
 }
 
 .connect-description {
   font-size: 14px;
-  color: #6b7280;
+  color: #64748b;
   line-height: 1.6;
   margin: 0 0 32px 0;
   max-width: 400px;
@@ -255,61 +263,68 @@ onMounted(() => loadStatus())
   margin-right: auto;
 }
 
-.connect-btn {
+.primary-btn {
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  padding: 14px 32px;
-  background: #4f46e5;
-  color: white;
-  border: none;
-  border-radius: 8px;
+  padding: 12px 28px;
+  background: #111827;
+  color: #ffffff;
+  border: 1px solid transparent;
+  border-radius: 10px;
   font-weight: 500;
   font-size: 15px;
+  font-family: inherit;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
-.connect-btn:hover:not(:disabled) {
-  background: #4338ca;
+.primary-btn:hover:not(:disabled) {
+  background: #1f2937;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transform: translateY(-1px);
 }
 
-.connect-btn:disabled {
+.primary-btn:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+  transform: none;
 }
 
 .connected-container {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 24px;
 }
 
 .profile-card {
-  background: white;
-  border: 1px solid #e5e7eb;
-  border-radius: 12px;
+  background: #ffffff;
+  border: 1px solid #f1f5f9;
+  border-radius: 16px;
   overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
 }
 
 .profile-header {
   background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
-  padding: 32px 24px;
+  padding: 32px 28px;
   display: flex;
   align-items: center;
   gap: 16px;
 }
 
 .profile-avatar {
-  width: 80px;
-  height: 80px;
+  width: 72px;
+  height: 72px;
   border-radius: 50%;
-  background: white;
+  background: rgba(255, 255, 255, 0.2);
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
   flex-shrink: 0;
+  backdrop-filter: blur(4px);
 }
 
 .profile-avatar img {
@@ -318,20 +333,25 @@ onMounted(() => loadStatus())
   object-fit: cover;
 }
 
+.profile-avatar svg {
+  color: rgba(255, 255, 255, 0.8);
+}
+
 .profile-info {
   flex: 1;
 }
 
 .profile-name {
-  font-size: 22px;
+  font-size: 20px;
   font-weight: 700;
-  color: white;
+  color: #ffffff;
   margin: 0 0 4px 0;
+  letter-spacing: -0.01em;
 }
 
 .profile-username {
-  font-size: 15px;
-  color: rgba(255, 255, 255, 0.9);
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.85);
   margin: 0;
 }
 
@@ -340,72 +360,84 @@ onMounted(() => loadStatus())
   align-items: center;
   gap: 8px;
   padding: 8px 16px;
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(4px);
   border-radius: 20px;
-  color: white;
-  font-size: 14px;
+  color: #ffffff;
+  font-size: 13px;
   font-weight: 500;
+  white-space: nowrap;
 }
 
 .profile-stats {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1px;
-  background: #e5e7eb;
+  display: flex;
+  align-items: center;
+  padding: 24px 28px;
+  gap: 0;
 }
 
 .stat-item {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 20px 24px;
-  background: white;
+  flex: 1;
 }
 
 .stat-item svg {
-  color: #6b7280;
+  color: #64748b;
   flex-shrink: 0;
 }
 
 .stat-value {
   font-size: 24px;
   font-weight: 700;
-  color: #111827;
+  color: #0f172a;
   margin: 0 0 2px 0;
+  letter-spacing: -0.02em;
 }
 
 .stat-label {
   font-size: 13px;
-  color: #6b7280;
+  color: #64748b;
   margin: 0;
+  font-weight: 500;
+}
+
+.stat-divider {
+  width: 1px;
+  height: 40px;
+  background: #f1f5f9;
+  flex-shrink: 0;
 }
 
 .details-card {
-  background: white;
-  border: 1px solid #e5e7eb;
-  border-radius: 12px;
-  padding: 24px;
+  background: #ffffff;
+  border: 1px solid #f1f5f9;
+  border-radius: 16px;
+  padding: 28px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
 }
 
 .details-title {
   font-size: 16px;
   font-weight: 600;
-  color: #111827;
-  margin: 0 0 16px 0;
+  color: #0f172a;
+  margin: 0 0 20px 0;
+  letter-spacing: -0.01em;
 }
 
 .details-list {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 0;
 }
 
 .detail-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px 0;
-  border-bottom: 1px solid #f3f4f6;
+  padding: 14px 0;
+  border-bottom: 1px solid #f1f5f9;
 }
 
 .detail-item:last-child {
@@ -414,32 +446,53 @@ onMounted(() => loadStatus())
 
 .detail-label {
   font-size: 14px;
-  color: #6b7280;
+  color: #64748b;
+  font-weight: 500;
 }
 
 .detail-value {
   font-size: 14px;
-  font-weight: 500;
-  color: #111827;
+  font-weight: 600;
+  color: #0f172a;
 }
 
-.disconnect-btn {
+.danger-btn {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 10px;
-  padding: 14px 24px;
-  background: #dc2626;
-  color: white;
-  border: none;
-  border-radius: 8px;
+  padding: 12px 24px;
+  background: #ffffff;
+  color: #e11d48;
+  border: 1px solid #f1f5f9;
+  border-radius: 10px;
   font-weight: 500;
   font-size: 14px;
+  font-family: inherit;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
 }
 
-.disconnect-btn:hover {
-  background: #b91c1c;
+.danger-btn:hover {
+  background: #fff1f2;
+  border-color: #fecaca;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  transform: translateY(-1px);
+}
+
+@media (max-width: 640px) {
+  .profile-header {
+    flex-direction: column;
+    text-align: center;
+  }
+  .profile-stats {
+    flex-direction: column;
+    gap: 16px;
+  }
+  .stat-divider {
+    width: 100%;
+    height: 1px;
+  }
 }
 </style>

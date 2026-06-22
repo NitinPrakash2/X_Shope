@@ -108,22 +108,26 @@ onMounted(() => {
 </script>
 
 <style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
 .callback-container {
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #fcfcfd;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
 }
 
 .callback-card {
-  background: white;
-  border-radius: 24px;
+  background: #ffffff;
+  border: 1px solid #f1f5f9;
+  border-radius: 20px;
   padding: 48px 40px;
-  max-width: 450px;
+  max-width: 420px;
   width: 100%;
   text-align: center;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02), 0 4px 12px rgba(0, 0, 0, 0.04);
 }
 
 .status-icon {
@@ -131,7 +135,7 @@ onMounted(() => {
 }
 
 .spinner {
-  color: #667eea;
+  color: #4f46e5;
   animation: spin 1s linear infinite;
 }
 
@@ -140,24 +144,26 @@ onMounted(() => {
 }
 
 .success-icon {
-  color: #16a34a;
+  color: #059669;
 }
 
 .error-icon {
-  color: #dc2626;
+  color: #e11d48;
 }
 
 .status-content h2 {
-  font-size: 24px;
+  font-size: 22px;
   font-weight: 700;
   margin: 0 0 10px 0;
   color: #0f172a;
+  letter-spacing: -0.02em;
 }
 
 .status-content p {
   font-size: 14px;
   color: #64748b;
-  margin: 0 0 20px 0;
+  margin: 0 0 24px 0;
+  line-height: 1.5;
 }
 
 .btn-retry {
@@ -165,17 +171,21 @@ onMounted(() => {
   align-items: center;
   gap: 8px;
   padding: 12px 24px;
-  background: linear-gradient(135deg, #667eea, #764ba2);
-  color: white;
-  border: none;
+  background: #111827;
+  color: #ffffff;
+  border: 1px solid transparent;
   border-radius: 10px;
-  font-weight: 600;
+  font-weight: 500;
   font-size: 14px;
+  font-family: inherit;
   cursor: pointer;
-  transition: transform 0.2s;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .btn-retry:hover {
-  transform: translateY(-2px);
+  background: #1f2937;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transform: translateY(-1px);
 }
 </style>

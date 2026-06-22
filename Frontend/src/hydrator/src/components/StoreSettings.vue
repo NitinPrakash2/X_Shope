@@ -1,6 +1,5 @@
 <template>
   <div class="page-container">
-    <!-- Header -->
     <div class="header">
       <div class="header-content">
         <div>
@@ -40,24 +39,26 @@
             ></textarea>
           </div>
 
-          <div class="form-group">
-            <label class="form-label">Contact Email</label>
-            <input
-              v-model="form.contact_email"
-              type="email"
-              placeholder="contact@store.com"
-              class="form-input"
-            />
-          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Contact Email</label>
+              <input
+                v-model="form.contact_email"
+                type="email"
+                placeholder="contact@store.com"
+                class="form-input"
+              />
+            </div>
 
-          <div class="form-group">
-            <label class="form-label">Support Number</label>
-            <input
-              v-model="form.support_number"
-              type="tel"
-              placeholder="+1 (555) 123-4567"
-              class="form-input"
-            />
+            <div class="form-group">
+              <label class="form-label">Support Number</label>
+              <input
+                v-model="form.support_number"
+                type="tel"
+                placeholder="+1 (555) 123-4567"
+                class="form-input"
+              />
+            </div>
           </div>
 
           <div class="form-group">
@@ -71,9 +72,9 @@
           </div>
 
           <div class="form-actions">
-            <button type="submit" :disabled="saving" class="save-btn">
-              <Loader2 v-if="saving" :size="20" class="animate-spin" />
-              <Save v-else :size="20" />
+            <button type="submit" :disabled="saving" class="primary-btn">
+              <Loader2 v-if="saving" :size="18" class="animate-spin" />
+              <Save v-else :size="18" />
               {{ saving ? 'Saving...' : 'Save Changes' }}
             </button>
           </div>
@@ -158,18 +159,24 @@ onMounted(() => loadStore())
 </script>
 
 <style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
 .page-container {
   min-height: 100vh;
-  background: #f9fafb;
+  background: #fcfcfd;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  color: #111827;
 }
 
 .header {
-  background: white;
-  border-bottom: 1px solid #e5e7eb;
-  padding: 20px 32px;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid #f3f4f6;
+  padding: 24px 32px;
   position: sticky;
   top: 0;
-  z-index: 10;
+  z-index: 20;
 }
 
 .header-content {
@@ -178,29 +185,32 @@ onMounted(() => loadStore())
 }
 
 .page-title {
-  font-size: 28px;
+  font-size: 24px;
   font-weight: 700;
-  color: #111827;
-  margin: 0 0 4px 0;
+  color: #0f172a;
+  margin: 0 0 6px 0;
+  letter-spacing: -0.02em;
 }
 
 .page-subtitle {
   font-size: 14px;
-  color: #6b7280;
+  color: #64748b;
   margin: 0;
+  font-weight: 400;
 }
 
 .content-wrapper {
   max-width: 800px;
   margin: 0 auto;
-  padding: 32px;
+  padding: 40px 32px;
 }
 
 .settings-card {
-  background: white;
-  border: 1px solid #e5e7eb;
-  border-radius: 12px;
+  background: #ffffff;
+  border: 1px solid #f1f5f9;
+  border-radius: 16px;
   padding: 32px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02), 0 1px 2px rgba(0, 0, 0, 0.01);
 }
 
 .settings-form {
@@ -213,6 +223,7 @@ onMounted(() => loadStore())
   display: flex;
   flex-direction: column;
   gap: 8px;
+  flex: 1;
 }
 
 .form-label {
@@ -222,59 +233,85 @@ onMounted(() => loadStore())
 }
 
 .required {
-  color: #dc2626;
+  color: #e11d48;
 }
 
 .form-input,
 .form-textarea {
   padding: 12px 16px;
-  border: 1px solid #d1d5db;
-  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
   font-size: 14px;
-  color: #111827;
-  transition: border 0.2s;
+  font-family: inherit;
+  color: #0f172a;
+  background: #ffffff;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
 }
 
 .form-input:focus,
 .form-textarea:focus {
   outline: none;
-  border-color: #4f46e5;
-  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.form-input::placeholder,
+.form-textarea::placeholder {
+  color: #94a3b8;
 }
 
 .form-textarea {
   resize: vertical;
   min-height: 100px;
-  font-family: inherit;
+  line-height: 1.5;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
 }
 
 .form-actions {
   display: flex;
   justify-content: flex-end;
   padding-top: 8px;
+  border-top: 1px solid #f1f5f9;
 }
 
-.save-btn {
+.primary-btn {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 12px 32px;
-  background: #4f46e5;
-  color: white;
-  border: none;
-  border-radius: 8px;
+  padding: 12px 28px;
+  background: #111827;
+  color: #ffffff;
+  border: 1px solid transparent;
+  border-radius: 10px;
   font-weight: 500;
   font-size: 14px;
+  font-family: inherit;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
-.save-btn:hover:not(:disabled) {
-  background: #4338ca;
+.primary-btn:hover:not(:disabled) {
+  background: #1f2937;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transform: translateY(-1px);
 }
 
-.save-btn:disabled {
+.primary-btn:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+  transform: none;
+}
+
+@media (max-width: 640px) {
+  .form-row {
+    grid-template-columns: 1fr;
+  }
 }
 </style>
