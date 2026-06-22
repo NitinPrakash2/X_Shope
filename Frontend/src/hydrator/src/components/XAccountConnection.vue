@@ -3,8 +3,8 @@
     <div class="header">
       <div class="header-content">
         <div>
-          <h1 class="page-title">X Account Connection</h1>
-          <p class="page-subtitle">Connect your X (Twitter) account to start publishing</p>
+          <h1 class="page-title">X Account</h1>
+          <p class="page-subtitle">Manage your X (Twitter) account connection</p>
         </div>
       </div>
     </div>
@@ -14,73 +14,99 @@
       <ErrorState v-else-if="error" :message="error" :showRetry="true" @retry="loadStatus" />
 
       <div v-else class="account-content">
+        <!-- Connect Card -->
         <div v-if="!accountStatus.is_connected" class="connect-card">
-          <div class="connect-icon">
-            <Twitter :size="48" />
+          <div class="connect-card-inner">
+            <div class="connect-icon-wrap">
+              <div class="connect-icon-glow"></div>
+              <div class="connect-icon">
+                <Twitter :size="36" />
+              </div>
+            </div>
+            <h2 class="connect-title">Connect Your X Account</h2>
+            <p class="connect-desc">Link your X (Twitter) account to start publishing products and reaching millions of customers directly from your dashboard.</p>
+            <button @click="connectAccount" :disabled="connecting" class="btn-primary">
+              <Loader2 v-if="connecting" :size="18" class="animate-spin" />
+              <Twitter v-else :size="18" />
+              <span>{{ connecting ? 'Connecting...' : 'Continue with X' }}</span>
+            </button>
           </div>
-          <h2 class="connect-title">Connect Your X Account</h2>
-          <p class="connect-description">Link your X (Twitter) account to start publishing products and reaching millions of customers.</p>
-          <button @click="connectAccount" :disabled="connecting" class="primary-btn">
-            <Loader2 v-if="connecting" :size="20" class="animate-spin" />
-            <Twitter v-else :size="20" />
-            {{ connecting ? 'Connecting...' : 'Connect X Account' }}
-          </button>
         </div>
 
+        <!-- Connected State -->
         <div v-else class="connected-container">
-          <div class="profile-card">
-            <div class="profile-header">
-              <div class="profile-avatar">
-                <img v-if="accountStatus.profile_image_url" :src="accountStatus.profile_image_url" alt="Profile" />
-                <Twitter v-else :size="32" />
+          <!-- Premium Profile Hero -->
+          <div class="profile-hero">
+            <div class="hero-bg">
+              <div class="hero-gradient"></div>
+              <div class="hero-pattern"></div>
+            </div>
+            <div class="hero-content">
+              <div class="hero-avatar-wrap">
+                <div class="hero-avatar-ring"></div>
+                <div class="hero-avatar">
+                  <img v-if="accountStatus.profile_image_url" :src="accountStatus.profile_image_url" alt="" />
+                  <Twitter v-else :size="36" />
+                </div>
               </div>
-              <div class="profile-info">
-                <h3 class="profile-name">{{ accountStatus.display_name || 'Unknown User' }}</h3>
-                <p class="profile-username">@{{ accountStatus.username || 'unknown' }}</p>
+              <div class="hero-info">
+                <h2 class="hero-name">{{ accountStatus.display_name || 'Unknown User' }}</h2>
+                <p class="hero-handle">@{{ accountStatus.username || 'unknown' }}</p>
               </div>
-              <div class="profile-badge">
-                <CheckCircle2 :size="20" />
+              <div class="hero-badge">
+                <div class="badge-dot"></div>
                 <span>Connected</span>
               </div>
             </div>
+          </div>
 
-            <div class="profile-stats">
-              <div class="stat-item">
-                <Users :size="20" />
-                <div>
-                  <p class="stat-value">{{ formatNumber(accountStatus.followers_count || 0) }}</p>
-                  <p class="stat-label">Followers</p>
-                </div>
-              </div>
-              <div class="stat-divider"></div>
-              <div class="stat-item">
-                <UserPlus :size="20" />
-                <div>
-                  <p class="stat-value">{{ formatNumber(accountStatus.following_count || 0) }}</p>
-                  <p class="stat-label">Following</p>
-                </div>
-              </div>
+          <!-- Stats Row -->
+          <div class="stats-row">
+            <div class="stat-box">
+              <p class="stat-num">{{ formatNumber(accountStatus.followers_count || 0) }}</p>
+              <p class="stat-lbl">Followers</p>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat-box">
+              <p class="stat-num">{{ formatNumber(accountStatus.following_count || 0) }}</p>
+              <p class="stat-lbl">Following</p>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat-box">
+              <p class="stat-num">{{ accountStatus.tweet_count || '—' }}</p>
+              <p class="stat-lbl">Posts</p>
             </div>
           </div>
 
-          <div class="details-card">
-            <h3 class="details-title">Account Details</h3>
-            <div class="details-list">
-              <div class="detail-item">
-                <span class="detail-label">User ID</span>
-                <span class="detail-value">{{ accountStatus.x_user_id || 'N/A' }}</span>
-              </div>
-              <div class="detail-item">
-                <span class="detail-label">Last Synced</span>
-                <span class="detail-value">{{ formatDate(accountStatus.last_synced_at) }}</span>
-              </div>
+          <!-- Bio (if available) -->
+          <div v-if="accountStatus.bio" class="bio-card">
+            <p class="bio-icon">“</p>
+            <p class="bio-text">{{ accountStatus.bio }}</p>
+          </div>
+
+          <!-- Info Grid -->
+          <div class="info-grid">
+            <div class="info-item">
+              <p class="info-label">User ID</p>
+              <p class="info-value mono">{{ accountStatus.x_user_id || '—' }}</p>
+            </div>
+            <div class="info-item">
+              <p class="info-label">Last Synced</p>
+              <p class="info-value">{{ formatDate(accountStatus.last_synced_at) }}</p>
             </div>
           </div>
 
-          <button @click="showDisconnectModal = true" class="danger-btn">
-            <XCircle :size="18" />
-            Disconnect X Account
-          </button>
+          <!-- Actions -->
+          <div class="actions-row">
+            <button @click="syncProfile" :disabled="syncing" class="btn-secondary">
+              <RefreshCw :size="16" :class="{ 'animate-spin': syncing }" />
+              <span>{{ syncing ? 'Syncing...' : 'Sync Profile' }}</span>
+            </button>
+            <button @click="showDisconnectModal = true" class="btn-danger">
+              <XCircle :size="16" />
+              <span>Disconnect</span>
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -102,7 +128,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { Twitter, CheckCircle2, XCircle, Loader2, Users, UserPlus } from 'lucide-vue-next'
+import { Twitter, CheckCircle2, XCircle, Loader2, RefreshCw } from 'lucide-vue-next'
 import { xshop } from '../api'
 import LoadingState from '../components/LoadingState.vue'
 import ErrorState from '../components/ErrorState.vue'
@@ -111,6 +137,7 @@ import ToastNotification from '../components/ToastNotification.vue'
 
 const loading = ref(false)
 const connecting = ref(false)
+const syncing = ref(false)
 const error = ref('')
 const accountStatus = ref<any>({})
 const showDisconnectModal = ref(false)
@@ -144,6 +171,21 @@ const connectAccount = async () => {
   }
 }
 
+const syncProfile = async () => {
+  syncing.value = true
+  try {
+    const res = await xshop.xAccountSync()
+    if (res.data?.status === 'success') {
+      toast.value = { show: true, type: 'success', message: 'Profile synced successfully' }
+      await loadStatus()
+    }
+  } catch (e: any) {
+    toast.value = { show: true, type: 'error', message: e.response?.data?.detail || 'Failed to sync profile' }
+  } finally {
+    syncing.value = false
+  }
+}
+
 const disconnectAccount = async () => {
   showDisconnectModal.value = false
   try {
@@ -172,327 +214,464 @@ onMounted(() => loadStatus())
 </script>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
 .page-container {
   min-height: 100vh;
-  background: #fcfcfd;
+  background: #f8f9fc;
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
-  color: #111827;
+  color: #0b1a33;
 }
 
 .header {
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-bottom: 1px solid #f3f4f6;
-  padding: 24px 32px;
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid #edf0f5;
+  padding: 22px 36px;
   position: sticky;
   top: 0;
   z-index: 20;
 }
 
 .header-content {
-  max-width: 1400px;
+  max-width: 820px;
   margin: 0 auto;
 }
 
 .page-title {
-  font-size: 24px;
+  font-size: 22px;
   font-weight: 700;
-  color: #0f172a;
-  margin: 0 0 6px 0;
-  letter-spacing: -0.02em;
+  color: #0b1a33;
+  margin: 0 0 4px 0;
+  letter-spacing: -0.01em;
 }
 
 .page-subtitle {
-  font-size: 14px;
-  color: #64748b;
+  font-size: 13px;
+  color: #6b7a99;
   margin: 0;
   font-weight: 400;
 }
 
 .content-wrapper {
-  max-width: 800px;
+  max-width: 820px;
   margin: 0 auto;
-  padding: 40px 32px;
+  padding: 40px 32px 64px;
 }
 
 .account-content {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 20px;
 }
 
+/* ========= CONNECT CARD ========= */
 .connect-card {
   background: #ffffff;
-  border: 1px solid #f1f5f9;
-  border-radius: 16px;
-  padding: 48px 32px;
+  border-radius: 24px;
+  padding: 56px 40px;
   text-align: center;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02), 0 1px 2px rgba(0, 0, 0, 0.01);
+  box-shadow: 0 1px 3px rgba(0,0,0,.03), 0 8px 32px -8px rgba(0,0,0,.06);
+  border: 1px solid #edf0f5;
 }
 
-.connect-icon {
+.connect-card-inner {
+  max-width: 420px;
+  margin: 0 auto;
+}
+
+.connect-icon-wrap {
+  position: relative;
   width: 80px;
   height: 80px;
-  background: #eef2ff;
-  color: #4f46e5;
-  border-radius: 20px;
+  margin: 0 auto 28px;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 auto 24px;
+}
+
+.connect-icon-glow {
+  position: absolute;
+  inset: 0;
+  border-radius: 24px;
+  background: linear-gradient(135deg, #4f46e5, #7c3aed);
+  opacity: .12;
+  filter: blur(12px);
+  transform: scale(1.25);
+}
+
+.connect-icon {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  border-radius: 24px;
+  background: linear-gradient(135deg, #4f46e5, #7c3aed);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 16px rgba(79,70,229,.25);
 }
 
 .connect-title {
   font-size: 22px;
   font-weight: 700;
-  color: #0f172a;
-  margin: 0 0 12px 0;
-  letter-spacing: -0.02em;
+  color: #0b1a33;
+  margin: 0 0 10px;
+  letter-spacing: -.02em;
 }
 
-.connect-description {
+.connect-desc {
   font-size: 14px;
-  color: #64748b;
-  line-height: 1.6;
-  margin: 0 0 32px 0;
-  max-width: 400px;
-  margin-left: auto;
-  margin-right: auto;
+  color: #6b7a99;
+  line-height: 1.65;
+  margin: 0 0 32px;
 }
 
-.primary-btn {
+.btn-primary {
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  padding: 12px 28px;
-  background: #111827;
-  color: #ffffff;
-  border: 1px solid transparent;
-  border-radius: 10px;
-  font-weight: 500;
-  font-size: 15px;
+  padding: 13px 32px;
+  background: #0b1a33;
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 14px;
   font-family: inherit;
   cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  transition: all .2s cubic-bezier(.4,0,.2,1);
+  box-shadow: 0 2px 6px rgba(11,26,51,.1);
 }
 
-.primary-btn:hover:not(:disabled) {
-  background: #1f2937;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+.btn-primary:hover:not(:disabled) {
+  background: #1a2d4a;
   transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(11,26,51,.14);
 }
 
-.primary-btn:disabled {
-  opacity: 0.6;
+.btn-primary:disabled {
+  opacity: .55;
   cursor: not-allowed;
   transform: none;
 }
 
+/* ========= CONNECTED — HERO ========= */
 .connected-container {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 20px;
 }
 
-.profile-card {
-  background: #ffffff;
-  border: 1px solid #f1f5f9;
-  border-radius: 16px;
+.profile-hero {
+  position: relative;
+  border-radius: 24px;
   overflow: hidden;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+  box-shadow: 0 1px 3px rgba(0,0,0,.03), 0 8px 32px -8px rgba(0,0,0,.07);
 }
 
-.profile-header {
-  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
-  padding: 32px 28px;
+.hero-bg {
+  position: absolute;
+  inset: 0;
+}
+
+.hero-gradient {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, #1a0a3e 0%, #4f46e5 40%, #7c3aed 70%, #a855f7 100%);
+}
+
+.hero-pattern {
+  position: absolute;
+  inset: 0;
+  opacity: .12;
+  background-image: radial-gradient(circle at 20% 50%, rgba(255,255,255,.2) 0%, transparent 50%),
+                    radial-gradient(circle at 80% 20%, rgba(255,255,255,.15) 0%, transparent 40%),
+                    radial-gradient(circle at 50% 80%, rgba(255,255,255,.1) 0%, transparent 45%);
+}
+
+.hero-content {
+  position: relative;
+  padding: 40px 36px;
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 20px;
 }
 
-.profile-avatar {
-  width: 72px;
-  height: 72px;
+.hero-avatar-wrap {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero-avatar-ring {
+  position: absolute;
+  inset: -4px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.2);
+  border: 3px solid rgba(255,255,255,.35);
+}
+
+.hero-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.15);
+  backdrop-filter: blur(6px);
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  flex-shrink: 0;
-  backdrop-filter: blur(4px);
 }
 
-.profile-avatar img {
+.hero-avatar img {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
-.profile-avatar svg {
-  color: rgba(255, 255, 255, 0.8);
+.hero-avatar svg {
+  color: rgba(255,255,255,.8);
+  width: 36px;
+  height: 36px;
 }
 
-.profile-info {
+.hero-info {
   flex: 1;
+  min-width: 0;
 }
 
-.profile-name {
-  font-size: 20px;
+.hero-name {
+  font-size: 22px;
   font-weight: 700;
-  color: #ffffff;
-  margin: 0 0 4px 0;
-  letter-spacing: -0.01em;
+  color: #fff;
+  margin: 0 0 4px;
+  letter-spacing: -.01em;
 }
 
-.profile-username {
+.hero-handle {
   font-size: 14px;
-  color: rgba(255, 255, 255, 0.85);
+  color: rgba(255,255,255,.7);
   margin: 0;
 }
 
-.profile-badge {
+.hero-badge {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 8px 16px;
-  background: rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(4px);
-  border-radius: 20px;
-  color: #ffffff;
+  padding: 8px 18px;
+  background: rgba(255,255,255,.12);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,.15);
+  border-radius: 100px;
+  color: #fff;
   font-size: 13px;
   font-weight: 500;
   white-space: nowrap;
 }
 
-.profile-stats {
-  display: flex;
-  align-items: center;
-  padding: 24px 28px;
-  gap: 0;
+.badge-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #4ade80;
+  box-shadow: 0 0 8px rgba(74,222,128,.5);
+  animation: pulse-dot 2s ease-in-out infinite;
 }
 
-.stat-item {
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: .7; transform: scale(.85); }
+}
+
+/* ========= STATS ROW ========= */
+.stats-row {
   display: flex;
   align-items: center;
-  gap: 12px;
+  background: #fff;
+  border: 1px solid #edf0f5;
+  border-radius: 20px;
+  padding: 24px 20px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.02);
+}
+
+.stat-box {
   flex: 1;
+  text-align: center;
 }
 
-.stat-item svg {
-  color: #64748b;
-  flex-shrink: 0;
+.stat-num {
+  font-size: 26px;
+  font-weight: 800;
+  color: #0b1a33;
+  margin: 0 0 4px;
+  letter-spacing: -.02em;
+  line-height: 1.1;
 }
 
-.stat-value {
-  font-size: 24px;
-  font-weight: 700;
-  color: #0f172a;
-  margin: 0 0 2px 0;
-  letter-spacing: -0.02em;
-}
-
-.stat-label {
+.stat-lbl {
   font-size: 13px;
-  color: #64748b;
+  color: #6b7a99;
   margin: 0;
   font-weight: 500;
 }
 
 .stat-divider {
   width: 1px;
-  height: 40px;
-  background: #f1f5f9;
+  height: 36px;
+  background: #edf0f5;
   flex-shrink: 0;
 }
 
-.details-card {
-  background: #ffffff;
-  border: 1px solid #f1f5f9;
+/* ========= BIO ========= */
+.bio-card {
+  background: #fff;
+  border: 1px solid #edf0f5;
+  border-radius: 20px;
+  padding: 24px 28px;
+  position: relative;
+  box-shadow: 0 1px 3px rgba(0,0,0,.02);
+}
+
+.bio-icon {
+  font-size: 40px;
+  line-height: 1;
+  color: #4f46e5;
+  opacity: .25;
+  margin: 0 0 -12px;
+  font-family: Georgia, serif;
+}
+
+.bio-text {
+  font-size: 14px;
+  color: #3b4a6b;
+  line-height: 1.7;
+  margin: 0;
+  font-style: italic;
+}
+
+/* ========= INFO GRID ========= */
+.info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.info-item {
+  background: #fff;
+  border: 1px solid #edf0f5;
   border-radius: 16px;
-  padding: 28px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+  padding: 20px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.02);
 }
 
-.details-title {
-  font-size: 16px;
+.info-label {
+  font-size: 12px;
   font-weight: 600;
-  color: #0f172a;
-  margin: 0 0 20px 0;
-  letter-spacing: -0.01em;
+  color: #6b7a99;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  margin: 0 0 8px;
 }
 
-.details-list {
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-}
-
-.detail-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 14px 0;
-  border-bottom: 1px solid #f1f5f9;
-}
-
-.detail-item:last-child {
-  border-bottom: none;
-}
-
-.detail-label {
+.info-value {
   font-size: 14px;
-  color: #64748b;
+  font-weight: 600;
+  color: #0b1a33;
+  margin: 0;
+  word-break: break-all;
+}
+
+.info-value.mono {
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  font-size: 13px;
   font-weight: 500;
+  color: #4b5a7a;
 }
 
-.detail-value {
-  font-size: 14px;
-  font-weight: 600;
-  color: #0f172a;
+/* ========= ACTIONS ========= */
+.actions-row {
+  display: flex;
+  gap: 12px;
 }
 
-.danger-btn {
+.btn-secondary {
+  flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  padding: 12px 24px;
-  background: #ffffff;
-  color: #e11d48;
-  border: 1px solid #f1f5f9;
-  border-radius: 10px;
-  font-weight: 500;
-  font-size: 14px;
+  gap: 8px;
+  padding: 12px 20px;
+  background: #fff;
+  color: #0b1a33;
+  border: 1px solid #e2e6ef;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 13px;
   font-family: inherit;
   cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+  transition: all .2s cubic-bezier(.4,0,.2,1);
+  box-shadow: 0 1px 2px rgba(0,0,0,.02);
 }
 
-.danger-btn:hover {
-  background: #fff1f2;
-  border-color: #fecaca;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+.btn-secondary:hover {
+  background: #f8f9fc;
+  border-color: #cdd3df;
   transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0,0,0,.04);
+}
+
+.btn-danger {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 20px;
+  background: #fff;
+  color: #dc2626;
+  border: 1px solid #fee2e2;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 13px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all .2s cubic-bezier(.4,0,.2,1);
+  box-shadow: 0 1px 2px rgba(0,0,0,.02);
+}
+
+.btn-danger:hover {
+  background: #fef2f2;
+  border-color: #fecaca;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0,0,0,.04);
 }
 
 @media (max-width: 640px) {
-  .profile-header {
+  .hero-content {
     flex-direction: column;
     text-align: center;
+    padding: 32px 24px;
   }
-  .profile-stats {
+  .stats-row {
     flex-direction: column;
     gap: 16px;
+    padding: 20px;
   }
   .stat-divider {
     width: 100%;
     height: 1px;
+  }
+  .actions-row {
+    flex-direction: column;
+  }
+  .info-grid {
+    grid-template-columns: 1fr;
   }
 }
 </style>

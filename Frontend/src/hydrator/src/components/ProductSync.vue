@@ -129,8 +129,14 @@ const loadSyncLogs = async () => {
   try {
     const res = await xshop.getSyncLogs(currentPage.value, 10)
     if (res.data?.status === 'success') {
-      syncLogs.value = res.data.output.items || []
-      totalPages.value = Math.ceil((res.data.output.total || 0) / 10)
+      const output = res.data.output
+      if (Array.isArray(output)) {
+        syncLogs.value = output
+        totalPages.value = 1
+      } else {
+        syncLogs.value = output.items || []
+        totalPages.value = Math.ceil((output.total || 0) / 10)
+      }
       if (syncLogs.value.length > 0) {
         lastSync.value = syncLogs.value[0]
       }
@@ -147,7 +153,8 @@ const syncNow = async () => {
   try {
     const res = await xshop.syncProducts()
     if (res.data?.status === 'success') {
-      toast.value = { show: true, type: 'success', message: `Synced ${res.data.output.synced || 0} products successfully` }
+      const syncedCount = (res.data.output.created || 0) + (res.data.output.updated || 0) || res.data.output.received || 0
+      toast.value = { show: true, type: 'success', message: `Synced ${syncedCount} products successfully` }
       loadSyncLogs()
     }
   } catch (e: any) {

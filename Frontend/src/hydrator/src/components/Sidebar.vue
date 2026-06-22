@@ -49,7 +49,7 @@
 import { ref, onMounted } from 'vue'
 import {
   LayoutDashboard, Package, ShoppingCart, RefreshCw,
-  Twitter, Settings, LogOut, Link2
+  Twitter, Settings, LogOut, Link2, ExternalLink
 } from 'lucide-vue-next'
 import { xshop } from '../api'
 
@@ -60,12 +60,13 @@ const xDisplayName = ref('')
 const xAvatar      = ref('')
 
 const navItems = [
-  { route: 'dashboard',  path: '/xshop',           label: 'Dashboard',    icon: LayoutDashboard },
-  { route: 'products',   path: '/xshop/products',  label: 'Products',     icon: Package },
-  { route: 'orders',     path: '/xshop/orders',    label: 'Orders',       icon: ShoppingCart },
-  { route: 'sync',       path: '/xshop/sync',      label: 'Product Sync', icon: RefreshCw },
-  { route: 'x-account',  path: '/xshop/x-account', label: 'X Account',    icon: Link2 },
-  { route: 'settings',   path: '/xshop/settings',  label: 'Settings',     icon: Settings },
+  { route: 'dashboard',  path: '/xshop',             label: 'Dashboard',     icon: LayoutDashboard },
+  { route: 'products',   path: '/xshop/products',    label: 'Products',      icon: Package },
+  { route: 'orders',     path: '/xshop/orders',      label: 'Orders',        icon: ShoppingCart },
+  { route: 'sync',       path: '/xshop/sync',        label: 'Product Sync',  icon: RefreshCw },
+  { route: 'published',  path: '/xshop/published',   label: 'Published',     icon: ExternalLink },
+  { route: 'x-account',  path: '/xshop/x-account',   label: 'X Account',     icon: Link2 },
+  { route: 'settings',   path: '/xshop/settings',    label: 'Settings',      icon: Settings },
 ]
 
 const navigateTo = (path: string) => {

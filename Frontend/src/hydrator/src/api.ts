@@ -63,6 +63,9 @@ export const xshop = {
   xAccountDisconnect: () =>
     api.post('/client/api/i/ona/xshop', { action: 'x_account_disconnect' }),
 
+  xAccountSync: () =>
+    api.post('/client/api/i/ona/xshop', { action: 'x_account_sync' }),
+
   // Products
   getProducts: (page = 1, limit = 20, search = '', status = '') =>
     api.post('/client/api/i/ona/xshop', { action: 'get_products', page, limit, search, status }),
@@ -75,6 +78,22 @@ export const xshop = {
   
   getSyncLogs: (page = 1, limit = 10) =>
     api.post('/client/api/i/ona/xshop', { action: 'get_sync_logs', page, limit }),
+
+  // Publish
+  publishProduct: (product_id: string, text?: string) =>
+    api.post('/client/api/i/ona/xshop', { action: 'publish_product', product_id, text: text || '' }),
+
+  publishBulk: (product_ids: string[]) =>
+    api.post('/client/api/i/ona/xshop', { action: 'publish_bulk', product_ids }),
+
+  getPublishJobs: (page = 1, limit = 20, status = '') =>
+    api.post('/client/api/i/ona/xshop', { action: 'get_publish_jobs', page, limit, status }),
+
+  getPublishedPosts: (page = 1, limit = 20) =>
+    api.post('/client/api/i/ona/xshop', { action: 'get_published_posts', page, limit }),
+
+  retryFailedJobs: () =>
+    api.post('/client/api/i/ona/xshop', { action: 'retry_failed_jobs' }),
 
   // Orders
   getOrders: (page = 1, limit = 20) =>

@@ -83,6 +83,9 @@
                   <Package :size="14" stroke-width="1.5" />
                   <span>Stock: {{ product.stock || 0 }}</span>
                 </div>
+                <button @click.stop="publishProduct(product)" class="publish-btn" title="Publish to X">
+                  <Twitter :size="14" stroke-width="2" />
+                </button>
               </div>
             </div>
           </div>
@@ -112,16 +115,19 @@
         </div>
       </div>
     </div>
+
+    <ToastNotification :show="toast.show" :type="toast.type" :message="toast.message" @close="toast.show = false" :duration="3000" />
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { Package, RefreshCw, ImageIcon, Search, ChevronLeft, ChevronRight, ChevronDown } from 'lucide-vue-next'
+import { Package, RefreshCw, ImageIcon, Search, ChevronLeft, ChevronRight, ChevronDown, Twitter, Loader2 } from 'lucide-vue-next'
 import { xshop } from '../api'
 import LoadingState from '../components/LoadingState.vue'
 import ErrorState from '../components/ErrorState.vue'
 import EmptyState from '../components/EmptyState.vue'
+import ToastNotification from '../components/ToastNotification.vue'
 
 const loading = ref(false)
 const error = ref('')
@@ -131,6 +137,8 @@ const statusFilter = ref('')
 const currentPage = ref(1)
 const totalPages = ref(1)
 const totalProducts = ref(0)
+const publishing = ref<string | null>(null)
+const toast = ref({ show: false, type: 'info' as any, message: '' })
 let searchTimeout: any = null
 
 const loadProducts = async () => {
@@ -170,6 +178,21 @@ const viewProduct = (id: string) => {
 const navigateToSync = () => {
   const navigate = (window as any).xshopNavigate
   if (navigate) navigate('/xshop/sync')
+}
+
+const publishProduct = async (product: any) => {
+  publishing.value = product.id
+  try {
+    const text = `🛍️ ${product.name}\n${product.description ? product.description.slice(0, 100) : ''}\n💰 $${product.price || ''}`
+    const res = await xshop.publishProduct(product.id, text.trim())
+    if (res.data?.status === 'success') {
+      toast.value = { show: true, type: 'success', message: `Published! X Post ID: ${res.data.output.x_post_id}` }
+    }
+  } catch (e: any) {
+    toast.value = { show: true, type: 'error', message: e.response?.data?.detail || 'Failed to publish' }
+  } finally {
+    publishing.value = null
+  }
 }
 
 const prevPage = () => {
@@ -471,6 +494,7 @@ onMounted(() => loadProducts())
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 8px;
 }
 
 .product-stock {
@@ -480,6 +504,29 @@ onMounted(() => loadProducts())
   font-size: 13px;
   color: #64748b;
   font-weight: 500;
+}
+
+.publish-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #1d9bf0;
+  cursor: pointer;
+  transition: all .2s ease;
+  flex-shrink: 0;
+}
+
+.publish-btn:hover {
+  background: #1d9bf0;
+  color: #ffffff;
+  border-color: #1d9bf0;
+  box-shadow: 0 2px 8px rgba(29,155,240,.25);
+  transform: scale(1.05);
 }
 
 /* Pagination */

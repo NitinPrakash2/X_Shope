@@ -16,6 +16,7 @@
           <OrdersList v-else-if="currentRoute === 'orders'" />
           <ProductSync v-else-if="currentRoute === 'sync'" />
           <XAccountConnection v-else-if="currentRoute === 'x-account'" />
+          <PublishedPosts v-else-if="currentRoute === 'published'" />
           <StoreSettings v-else-if="currentRoute === 'settings'" />
           <div v-else class="not-found">
             <h2>Page Not Found</h2>
@@ -46,6 +47,7 @@ import OrdersList from './src/components/OrdersList.vue';
 import ProductSync from './src/components/ProductSync.vue';
 import XAccountConnection from './src/components/XAccountConnection.vue';
 import StoreSettings from './src/components/StoreSettings.vue';
+import PublishedPosts from './src/components/PublishedPosts.vue';
 import Sidebar from './src/components/Sidebar.vue';
 
 const {_p, _pp} = defineProps<{
@@ -116,6 +118,9 @@ const updateRoute = () => {
   } else if (path.includes('/x-account')) {
     currentRoute.value = 'x-account';
     console.log('✅ Route: x-account');
+  } else if (path.includes('/published')) {
+    currentRoute.value = 'published';
+    console.log('✅ Route: published');
   } else if (path.includes('/settings')) {
     currentRoute.value = 'settings';
     console.log('✅ Route: settings');
