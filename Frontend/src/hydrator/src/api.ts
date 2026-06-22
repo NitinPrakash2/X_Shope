@@ -13,6 +13,22 @@ api.interceptors.request.use((config) => {
   return config
 })
 
+// Handle 401 – clear stale tokens and redirect to login
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      localStorage.removeItem('access_token')
+      localStorage.removeItem('refresh_token')
+      // Only redirect if not already on login/callback page
+      if (!window.location.pathname.includes('/login') && !window.location.pathname.includes('/callback')) {
+        window.location.href = '/xshop/login'
+      }
+    }
+    return Promise.reject(error)
+  }
+)
+
 export const xshop = {
   // Auth
   register: (email: string, password: string, full_name: string) =>

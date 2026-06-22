@@ -6,17 +6,22 @@
     <!-- Show Login if not authenticated -->
     <Login v-else-if="!isAuthenticated && currentRoute === 'login'" />
     
-    <!-- Show authenticated routes -->
+    <!-- Show authenticated routes with sidebar -->
     <template v-else-if="isAuthenticated">
-      <Dashboard v-if="currentRoute === 'dashboard'" />
-      <ProductsList v-else-if="currentRoute === 'products'" />
-      <OrdersList v-else-if="currentRoute === 'orders'" />
-      <ProductSync v-else-if="currentRoute === 'sync'" />
-      <XAccountConnection v-else-if="currentRoute === 'x-account'" />
-      <StoreSettings v-else-if="currentRoute === 'settings'" />
-      <div v-else class="not-found">
-        <h2>Page Not Found</h2>
-        <button @click="navigate('/xshop')">Go to Dashboard</button>
+      <div class="app-shell">
+        <Sidebar :currentRoute="currentRoute" />
+        <main class="main-content">
+          <Dashboard v-if="currentRoute === 'dashboard'" />
+          <ProductsList v-else-if="currentRoute === 'products'" />
+          <OrdersList v-else-if="currentRoute === 'orders'" />
+          <ProductSync v-else-if="currentRoute === 'sync'" />
+          <XAccountConnection v-else-if="currentRoute === 'x-account'" />
+          <StoreSettings v-else-if="currentRoute === 'settings'" />
+          <div v-else class="not-found">
+            <h2>Page Not Found</h2>
+            <button @click="navigate('/xshop')">Go to Dashboard</button>
+          </div>
+        </main>
       </div>
     </template>
     
@@ -41,6 +46,7 @@ import OrdersList from './src/components/OrdersList.vue';
 import ProductSync from './src/components/ProductSync.vue';
 import XAccountConnection from './src/components/XAccountConnection.vue';
 import StoreSettings from './src/components/StoreSettings.vue';
+import Sidebar from './src/components/Sidebar.vue';
 
 const {_p, _pp} = defineProps<{
     _p: _p_TYP,
@@ -54,6 +60,10 @@ const currentRoute = ref('login');
 const checkAuth = () => {
   const token = localStorage.getItem('access_token');
   isAuthenticated.value = !!token;
+  if (!isAuthenticated.value && currentRoute.value !== 'login' && currentRoute.value !== 'oauth-callback') {
+    currentRoute.value = 'login';
+    window.history.replaceState({}, '', '/xshop/login');
+  }
   console.log('Auth check:', { token: !!token, isAuth: isAuthenticated.value, route: currentRoute.value });
 };
 
@@ -150,6 +160,17 @@ watch(currentRoute, (newRoute) => {
   width: 100%;
   min-height: 100vh;
   background: #ffffff;
+}
+
+.app-shell {
+  display: flex;
+  min-height: 100vh;
+}
+
+.main-content {
+  flex: 1;
+  min-width: 0;
+  overflow-y: auto;
 }
 
 .not-found {

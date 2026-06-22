@@ -77,15 +77,17 @@
             </div>
           </div>
 
-          <div class="stat-card">
+          <div class="stat-card" style="cursor:pointer" @click="navigateTo('/xshop/x-account')">
             <div class="stat-icon" style="background: #dbeafe; color: #2563eb;">
               <Twitter :size="24" />
             </div>
             <div class="stat-content">
               <p class="stat-label">X Account</p>
-              <p class="stat-value">{{ dashboard.x_account_connected ? 'Connected' : 'Not Connected' }}</p>
-              <p :class="['stat-change', dashboard.x_account_connected ? 'positive' : 'negative']">
-                {{ dashboard.x_account_connected ? 'Active' : 'Connect now' }}
+              <p class="stat-value" :style="dashboard.x_account?.is_connected ? 'color:#16a34a;font-size:18px' : ''">
+                {{ dashboard.x_account?.is_connected ? 'Connected' : 'Not Connected' }}
+              </p>
+              <p :class="['stat-change', dashboard.x_account?.is_connected ? 'positive' : 'negative']">
+                {{ dashboard.x_account?.is_connected ? ('@' + dashboard.x_account.username) : 'Connect now →' }}
               </p>
             </div>
           </div>
@@ -185,6 +187,11 @@ const formatNumber = (num: number) => {
   if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M'
   if (num >= 1000) return (num / 1000).toFixed(1) + 'K'
   return num.toString()
+}
+
+const navigateTo = (path: string) => {
+  const nav = (window as any).xshopNavigate
+  if (nav) nav(path)
 }
 
 onMounted(() => loadDashboard())
