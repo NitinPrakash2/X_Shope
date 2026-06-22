@@ -3,7 +3,7 @@
     <!-- Brand -->
     <div class="sidebar-brand">
       <div class="brand-icon">
-        <Twitter :size="22" />
+        <Twitter :size="20" stroke-width="2" />
       </div>
       <span class="brand-name">X Shop</span>
     </div>
@@ -16,7 +16,7 @@
         @click="navigateTo(item.path)"
         :class="['nav-item', { active: currentRoute === item.route }]"
       >
-        <component :is="item.icon" :size="20" />
+        <component :is="item.icon" :size="18" stroke-width="2" />
         <span>{{ item.label }}</span>
       </button>
     </nav>
@@ -28,7 +28,9 @@
     <div class="sidebar-footer">
       <div v-if="xUsername" class="x-profile-mini">
         <img v-if="xAvatar" :src="xAvatar" alt="avatar" class="x-avatar" />
-        <Twitter v-else :size="18" class="x-icon-mini" />
+        <div v-else class="x-avatar-placeholder">
+          <Twitter :size="14" />
+        </div>
         <div class="x-profile-info">
           <span class="x-display">{{ xDisplayName || xUsername }}</span>
           <span class="x-handle">@{{ xUsername }}</span>
@@ -36,7 +38,7 @@
       </div>
 
       <button @click="handleLogout" class="logout-btn">
-        <LogOut :size="18" />
+        <LogOut :size="18" stroke-width="2" />
         <span>Logout</span>
       </button>
     </div>
@@ -59,11 +61,11 @@ const xAvatar      = ref('')
 
 const navItems = [
   { route: 'dashboard',  path: '/xshop',           label: 'Dashboard',    icon: LayoutDashboard },
-  { route: 'products',   path: '/xshop/products',   label: 'Products',     icon: Package },
-  { route: 'orders',     path: '/xshop/orders',     label: 'Orders',       icon: ShoppingCart },
-  { route: 'sync',       path: '/xshop/sync',       label: 'Product Sync', icon: RefreshCw },
-  { route: 'x-account',  path: '/xshop/x-account',  label: 'X Account',    icon: Link2 },
-  { route: 'settings',   path: '/xshop/settings',   label: 'Settings',     icon: Settings },
+  { route: 'products',   path: '/xshop/products',  label: 'Products',     icon: Package },
+  { route: 'orders',     path: '/xshop/orders',    label: 'Orders',       icon: ShoppingCart },
+  { route: 'sync',       path: '/xshop/sync',      label: 'Product Sync', icon: RefreshCw },
+  { route: 'x-account',  path: '/xshop/x-account', label: 'X Account',    icon: Link2 },
+  { route: 'settings',   path: '/xshop/settings',  label: 'Settings',     icon: Settings },
 ]
 
 const navigateTo = (path: string) => {
@@ -91,103 +93,111 @@ onMounted(async () => {
 </script>
 
 <style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
 .sidebar {
-  width: 220px;
-  min-width: 220px;
+  width: 240px;
+  min-width: 240px;
   height: 100vh;
   position: sticky;
   top: 0;
-  background: #0f172a;
+  background: #ffffff;
+  border-right: 1px solid #f1f5f9;
   display: flex;
   flex-direction: column;
-  padding: 20px 12px;
-  gap: 4px;
+  padding: 24px 16px;
+  gap: 8px;
   overflow-y: auto;
   z-index: 100;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
 }
 
+/* Brand Section */
 .sidebar-brand {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 6px 10px 18px;
-  border-bottom: 1px solid rgba(255,255,255,0.08);
-  margin-bottom: 8px;
+  gap: 12px;
+  padding: 4px 8px 24px 8px;
 }
 
 .brand-icon {
-  width: 36px;
-  height: 36px;
-  background: linear-gradient(135deg, #1d9bf0, #7856ff);
-  border-radius: 10px;
+  width: 32px;
+  height: 32px;
+  background: #0f172a;
+  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
+  color: #ffffff;
   flex-shrink: 0;
 }
 
 .brand-name {
-  font-size: 17px;
+  font-size: 16px;
   font-weight: 700;
-  color: #fff;
-  letter-spacing: 0.3px;
+  color: #0f172a;
+  letter-spacing: -0.01em;
 }
 
+/* Navigation Items */
 .sidebar-nav {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 4px;
 }
 
 .nav-item {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 10px 12px;
-  border-radius: 8px;
+  gap: 12px;
+  padding: 10px 14px;
+  border-radius: 10px;
   border: none;
   background: transparent;
-  color: #94a3b8;
+  color: #64748b;
   font-size: 14px;
   font-weight: 500;
+  font-family: inherit;
   cursor: pointer;
-  transition: all 0.15s;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   text-align: left;
   width: 100%;
 }
 
 .nav-item:hover {
-  background: rgba(255,255,255,0.06);
-  color: #e2e8f0;
+  background: #f8fafc;
+  color: #0f172a;
 }
 
+/* Modern Active State */
 .nav-item.active {
-  background: linear-gradient(135deg, rgba(29,155,240,0.18), rgba(120,86,255,0.18));
-  color: #fff;
-  box-shadow: inset 0 0 0 1px rgba(29,155,240,0.25);
+  background: #f1f5f9;
+  color: #0f172a;
+  font-weight: 600;
 }
 
 .nav-item.active svg {
-  color: #1d9bf0;
+  color: #0f172a;
 }
 
+/* Footer Section */
 .sidebar-footer {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  padding-top: 12px;
-  border-top: 1px solid rgba(255,255,255,0.08);
+  gap: 12px;
+  padding-top: 16px;
+  border-top: 1px solid #f1f5f9;
 }
 
+/* Minimalist Profile Patch */
 .x-profile-mini {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px 10px;
-  background: rgba(29,155,240,0.1);
-  border-radius: 8px;
-  border: 1px solid rgba(29,155,240,0.2);
+  gap: 10px;
+  padding: 10px;
+  background: #f8fafc;
+  border: 1px solid #f1f5f9;
+  border-radius: 12px;
 }
 
 .x-avatar {
@@ -198,8 +208,15 @@ onMounted(async () => {
   flex-shrink: 0;
 }
 
-.x-icon-mini {
-  color: #1d9bf0;
+.x-avatar-placeholder {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #e2e8f0;
+  color: #64748b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   flex-shrink: 0;
 }
 
@@ -210,9 +227,9 @@ onMounted(async () => {
 }
 
 .x-display {
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
-  color: #e2e8f0;
+  color: #0f172a;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -220,30 +237,33 @@ onMounted(async () => {
 
 .x-handle {
   font-size: 11px;
-  color: #64748b;
+  color: #94a3b8;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
+/* Clean Logout */
 .logout-btn {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 10px 12px;
-  border-radius: 8px;
+  gap: 12px;
+  padding: 10px 14px;
+  border-radius: 10px;
   border: none;
   background: transparent;
-  color: #ef4444;
+  color: #64748b;
   font-size: 14px;
   font-weight: 500;
+  font-family: inherit;
   cursor: pointer;
-  transition: all 0.15s;
+  transition: all 0.2s ease;
   width: 100%;
   text-align: left;
 }
 
 .logout-btn:hover {
-  background: rgba(239, 68, 68, 0.1);
+  background: #fff1f2;
+  color: #e11d48;
 }
 </style>

@@ -5,11 +5,11 @@
       <div class="header-content">
         <div>
           <h1 class="page-title">Dashboard</h1>
-          <p class="page-subtitle">Welcome back! Here's your store overview</p>
+          <p class="page-subtitle">Welcome back! Here's your store overview.</p>
         </div>
         <button @click="refresh" class="refresh-btn" :disabled="loading">
           <RefreshCw :class="{ 'animate-spin': loading }" :size="18" />
-          Refresh
+          <span>Refresh</span>
         </button>
       </div>
     </div>
@@ -23,105 +23,128 @@
         <div class="stats-grid">
           <div class="stat-card">
             <div class="stat-icon" style="background: #eef2ff; color: #4f46e5;">
-              <Package :size="24" />
+              <Package :size="24" stroke-width="1.5" />
             </div>
             <div class="stat-content">
               <p class="stat-label">Total Products</p>
               <p class="stat-value">{{ dashboard.total_products }}</p>
-              <p class="stat-change positive">+12% from last month</p>
+              <div class="stat-footer">
+                <span class="stat-change positive">+12%</span>
+                <span class="stat-context">from last month</span>
+              </div>
             </div>
           </div>
 
           <div class="stat-card">
             <div class="stat-icon" style="background: #f0fdf4; color: #16a34a;">
-              <FileText :size="24" />
+              <FileText :size="24" stroke-width="1.5" />
             </div>
             <div class="stat-content">
               <p class="stat-label">Published Posts</p>
               <p class="stat-value">{{ dashboard.published_posts }}</p>
-              <p class="stat-change positive">+8% from last month</p>
+              <div class="stat-footer">
+                <span class="stat-change positive">+8%</span>
+                <span class="stat-context">from last month</span>
+              </div>
             </div>
           </div>
 
           <div class="stat-card">
             <div class="stat-icon" style="background: #fef3c7; color: #d97706;">
-              <Clock :size="24" />
+              <Clock :size="24" stroke-width="1.5" />
             </div>
             <div class="stat-content">
               <p class="stat-label">Scheduled Posts</p>
               <p class="stat-value">{{ dashboard.scheduled_posts }}</p>
-              <p class="stat-change">{{ dashboard.scheduled_posts }} pending</p>
+              <div class="stat-footer">
+                <span class="stat-change neutral">{{ dashboard.scheduled_posts }} pending</span>
+              </div>
             </div>
           </div>
 
           <div class="stat-card">
             <div class="stat-icon" style="background: #fee2e2; color: #dc2626;">
-              <AlertCircle :size="24" />
+              <AlertCircle :size="24" stroke-width="1.5" />
             </div>
             <div class="stat-content">
               <p class="stat-label">Failed Posts</p>
               <p class="stat-value">{{ dashboard.failed_posts }}</p>
-              <p class="stat-change negative" v-if="dashboard.failed_posts > 0">Needs attention</p>
-              <p class="stat-change" v-else>All good</p>
+              <div class="stat-footer">
+                <span class="stat-change negative" v-if="dashboard.failed_posts > 0">Needs attention</span>
+                <span class="stat-change positive" v-else>All good</span>
+              </div>
             </div>
           </div>
 
           <div class="stat-card">
             <div class="stat-icon" style="background: #f3e8ff; color: #9333ea;">
-              <ShoppingCart :size="24" />
+              <ShoppingCart :size="24" stroke-width="1.5" />
             </div>
             <div class="stat-content">
               <p class="stat-label">Total Orders</p>
               <p class="stat-value">{{ dashboard.total_orders }}</p>
-              <p class="stat-change positive">+24% from last month</p>
+              <div class="stat-footer">
+                <span class="stat-change positive">+24%</span>
+                <span class="stat-context">from last month</span>
+              </div>
             </div>
           </div>
 
-          <div class="stat-card" style="cursor:pointer" @click="navigateTo('/xshop/x-account')">
-            <div class="stat-icon" style="background: #dbeafe; color: #2563eb;">
-              <Twitter :size="24" />
+          <div class="stat-card clickable" @click="navigateTo('/xshop/x-account')">
+            <div class="stat-icon" style="background: #eff6ff; color: #3b82f6;">
+              <Twitter :size="24" stroke-width="1.5" />
             </div>
             <div class="stat-content">
               <p class="stat-label">X Account</p>
-              <p class="stat-value" :style="dashboard.x_account?.is_connected ? 'color:#16a34a;font-size:18px' : ''">
+              <p class="stat-value" :style="dashboard.x_account?.is_connected ? 'color: #111827;' : ''">
                 {{ dashboard.x_account?.is_connected ? 'Connected' : 'Not Connected' }}
               </p>
-              <p :class="['stat-change', dashboard.x_account?.is_connected ? 'positive' : 'negative']">
-                {{ dashboard.x_account?.is_connected ? ('@' + dashboard.x_account.username) : 'Connect now →' }}
-              </p>
+              <div class="stat-footer">
+                <span :class="['stat-change', dashboard.x_account?.is_connected ? 'positive' : 'negative']">
+                  {{ dashboard.x_account?.is_connected ? ('@' + dashboard.x_account.username) : 'Connect now →' }}
+                </span>
+              </div>
             </div>
           </div>
         </div>
 
         <!-- Analytics Section -->
-        <div v-if="analytics" class="analytics-card">
+        <div v-if="analytics" class="analytics-section">
           <h2 class="section-title">Analytics Overview</h2>
-          <div class="analytics-grid">
-            <div class="analytics-item">
-              <div class="analytics-icon" style="background: #eef2ff; color: #4f46e5;">
-                <Eye :size="20" />
+          <div class="analytics-card">
+            <div class="analytics-grid">
+              <div class="analytics-item">
+                <div class="analytics-icon" style="background: #eef2ff; color: #4f46e5;">
+                  <Eye :size="20" stroke-width="1.5" />
+                </div>
+                <div class="analytics-info">
+                  <p class="analytics-label">Total Views</p>
+                  <p class="analytics-value">{{ formatNumber(analytics.total_views || 0) }}</p>
+                </div>
               </div>
-              <div>
-                <p class="analytics-label">Total Views</p>
-                <p class="analytics-value">{{ formatNumber(analytics.total_views || 0) }}</p>
+              
+              <div class="divider"></div>
+
+              <div class="analytics-item">
+                <div class="analytics-icon" style="background: #f0fdf4; color: #16a34a;">
+                  <MousePointer :size="20" stroke-width="1.5" />
+                </div>
+                <div class="analytics-info">
+                  <p class="analytics-label">Total Clicks</p>
+                  <p class="analytics-value">{{ formatNumber(analytics.total_clicks || 0) }}</p>
+                </div>
               </div>
-            </div>
-            <div class="analytics-item">
-              <div class="analytics-icon" style="background: #f0fdf4; color: #16a34a;">
-                <MousePointer :size="20" />
-              </div>
-              <div>
-                <p class="analytics-label">Total Clicks</p>
-                <p class="analytics-value">{{ formatNumber(analytics.total_clicks || 0) }}</p>
-              </div>
-            </div>
-            <div class="analytics-item">
-              <div class="analytics-icon" style="background: #fef3c7; color: #d97706;">
-                <TrendingUp :size="20" />
-              </div>
-              <div>
-                <p class="analytics-label">Conversion Rate</p>
-                <p class="analytics-value">{{ analytics.conversion_rate || 0 }}%</p>
+
+              <div class="divider"></div>
+
+              <div class="analytics-item">
+                <div class="analytics-icon" style="background: #fef3c7; color: #d97706;">
+                  <TrendingUp :size="20" stroke-width="1.5" />
+                </div>
+                <div class="analytics-info">
+                  <p class="analytics-label">Conversion Rate</p>
+                  <p class="analytics-value">{{ analytics.conversion_rate || 0 }}%</p>
+                </div>
               </div>
             </div>
           </div>
@@ -149,7 +172,11 @@ const dashboard = ref({
   scheduled_posts: 0,
   failed_posts: 0,
   total_orders: 0,
-  x_account_connected: false
+  x_account_connected: false,
+  x_account: {
+    is_connected: false,
+    username: ''
+  }
 })
 const analytics = ref<any>(null)
 const toast = ref({ show: false, type: 'info' as any, message: '' })
@@ -198,18 +225,25 @@ onMounted(() => loadDashboard())
 </script>
 
 <style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
 .dashboard-container {
   min-height: 100vh;
-  background: #f9fafb;
+  background: #fcfcfd;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  color: #111827;
 }
 
+/* Header Styling */
 .header {
-  background: white;
-  border-bottom: 1px solid #e5e7eb;
-  padding: 20px 32px;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid #f3f4f6;
+  padding: 24px 32px;
   position: sticky;
   top: 0;
-  z-index: 10;
+  z-index: 20;
 }
 
 .header-content {
@@ -221,79 +255,114 @@ onMounted(() => loadDashboard())
 }
 
 .page-title {
-  font-size: 28px;
+  font-size: 24px;
   font-weight: 700;
-  color: #111827;
-  margin: 0 0 4px 0;
+  color: #0f172a;
+  margin: 0 0 6px 0;
+  letter-spacing: -0.02em;
 }
 
 .page-subtitle {
   font-size: 14px;
-  color: #6b7280;
+  color: #64748b;
   margin: 0;
+  font-weight: 400;
 }
 
+/* Primary Button */
 .refresh-btn {
   display: flex;
   align-items: center;
   gap: 8px;
   padding: 10px 20px;
-  background: #4f46e5;
-  color: white;
-  border: none;
-  border-radius: 8px;
+  background: #111827;
+  color: #ffffff;
+  border: 1px solid transparent;
+  border-radius: 10px;
   font-weight: 500;
   font-size: 14px;
+  font-family: inherit;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .refresh-btn:hover:not(:disabled) {
-  background: #4338ca;
+  background: #1f2937;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transform: translateY(-1px);
 }
 
 .refresh-btn:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+  transform: none;
 }
 
 .content-wrapper {
   max-width: 1400px;
   margin: 0 auto;
-  padding: 32px;
+  padding: 40px 32px;
 }
 
 .dashboard-grid {
   display: flex;
   flex-direction: column;
+  gap: 40px;
+}
+
+/* Stats Grid */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
   gap: 24px;
 }
 
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 20px;
-}
-
+/* Premium Card Design */
 .stat-card {
-  background: white;
-  border: 1px solid #e5e7eb;
-  border-radius: 12px;
+  background: #ffffff;
+  border: 1px solid #f1f5f9;
+  border-radius: 16px;
   padding: 24px;
   display: flex;
-  gap: 16px;
-  transition: all 0.2s;
+  gap: 20px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02), 0 1px 2px rgba(0, 0, 0, 0.01);
+  position: relative;
+  overflow: hidden;
 }
 
 .stat-card:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  transform: translateY(-2px);
+  border-color: #e2e8f0;
+  box-shadow: 0 12px 24px -8px rgba(0, 0, 0, 0.06), 0 4px 6px -2px rgba(0, 0, 0, 0.03);
+  transform: translateY(-3px);
+}
+
+.stat-card.clickable {
+  cursor: pointer;
+}
+
+.stat-card.clickable::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 16px;
+  box-shadow: 0 0 0 2px transparent;
+  transition: box-shadow 0.2s ease;
+  pointer-events: none;
+}
+
+.stat-card.clickable:active::after {
+  box-shadow: 0 0 0 2px #3b82f6;
 }
 
 .stat-icon {
-  width: 48px;
-  height: 48px;
-  border-radius: 10px;
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -302,82 +371,148 @@ onMounted(() => loadDashboard())
 
 .stat-content {
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .stat-label {
-  font-size: 13px;
-  color: #6b7280;
-  margin: 0 0 8px 0;
+  font-size: 14px;
+  color: #64748b;
+  margin: 0 0 6px 0;
   font-weight: 500;
 }
 
 .stat-value {
   font-size: 28px;
   font-weight: 700;
-  color: #111827;
-  margin: 0 0 6px 0;
+  color: #0f172a;
+  margin: 0 0 8px 0;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
 }
 
-.stat-change {
-  font-size: 12px;
-  color: #6b7280;
-  margin: 0;
+.stat-footer {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.stat-context {
+  color: #94a3b8;
+  font-weight: 400;
 }
 
 .stat-change.positive {
-  color: #16a34a;
+  color: #059669;
+  background: #ecfdf5;
+  padding: 2px 8px;
+  border-radius: 12px;
 }
 
 .stat-change.negative {
-  color: #dc2626;
+  color: #e11d48;
+  background: #fff1f2;
+  padding: 2px 8px;
+  border-radius: 12px;
 }
 
-.analytics-card {
-  background: white;
-  border: 1px solid #e5e7eb;
+.stat-change.neutral {
+  color: #d97706;
+  background: #fffbeb;
+  padding: 2px 8px;
   border-radius: 12px;
-  padding: 24px;
+}
+
+/* Analytics Section */
+.analytics-section {
+  margin-top: 10px;
 }
 
 .section-title {
   font-size: 18px;
   font-weight: 600;
-  color: #111827;
+  color: #0f172a;
   margin: 0 0 20px 0;
+  letter-spacing: -0.01em;
+}
+
+.analytics-card {
+  background: #ffffff;
+  border: 1px solid #f1f5f9;
+  border-radius: 16px;
+  padding: 32px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+  transition: all 0.3s ease;
+}
+
+.analytics-card:hover {
+  box-shadow: 0 8px 16px -6px rgba(0, 0, 0, 0.04);
 }
 
 .analytics-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 24px;
 }
 
 .analytics-item {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 16px;
+  flex: 1;
+  min-width: 200px;
 }
 
 .analytics-icon {
-  width: 40px;
-  height: 40px;
-  border-radius: 8px;
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
 }
 
+.analytics-info {
+  display: flex;
+  flex-direction: column;
+}
+
 .analytics-label {
-  font-size: 13px;
-  color: #6b7280;
+  font-size: 14px;
+  color: #64748b;
   margin: 0 0 4px 0;
+  font-weight: 500;
 }
 
 .analytics-value {
-  font-size: 20px;
+  font-size: 24px;
   font-weight: 700;
-  color: #111827;
+  color: #0f172a;
   margin: 0;
+  letter-spacing: -0.02em;
+}
+
+.divider {
+  width: 1px;
+  height: 40px;
+  background-color: #e2e8f0;
+}
+
+/* Responsive Fixes */
+@media (max-width: 768px) {
+  .analytics-grid {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .divider {
+    width: 100%;
+    height: 1px;
+  }
 }
 </style>

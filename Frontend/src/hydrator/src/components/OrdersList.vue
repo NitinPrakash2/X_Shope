@@ -5,11 +5,11 @@
       <div class="header-content">
         <div>
           <h1 class="page-title">Orders</h1>
-          <p class="page-subtitle">Manage customer orders</p>
+          <p class="page-subtitle">Manage customer orders and transactions.</p>
         </div>
         <button @click="loadOrders" :disabled="loading" class="refresh-btn">
-          <RefreshCw :class="{ 'animate-spin': loading }" :size="18" />
-          Refresh
+          <RefreshCw :class="{ 'animate-spin': loading }" :size="16" stroke-width="2" />
+          <span>Refresh</span>
         </button>
       </div>
     </div>
@@ -27,67 +27,75 @@
       </div>
 
       <div v-else class="orders-container">
-        <div class="orders-table">
-          <table>
-            <thead>
-              <tr>
-                <th>Order ID</th>
-                <th>Customer</th>
-                <th>Product</th>
-                <th>Amount</th>
-                <th>Status</th>
-                <th>Date</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="order in orders" :key="order.id" class="order-row">
-                <td>
-                  <span class="order-id">{{ order.id.substring(0, 8) }}...</span>
-                </td>
-                <td>
-                  <div class="customer-cell">
-                    <p class="customer-name">{{ order.customer_name || 'N/A' }}</p>
-                    <p class="customer-email">{{ order.customer_email || 'N/A' }}</p>
-                  </div>
-                </td>
-                <td>
-                  <span class="product-id">{{ order.product_id ? order.product_id.substring(0, 8) + '...' : 'N/A' }}</span>
-                </td>
-                <td>
-                  <span class="amount">{{ formatAmount(order.amount) }}</span>
-                </td>
-                <td>
-                  <span :class="['status-badge', getStatusClass(order.status)]">
-                    {{ order.status }}
-                  </span>
-                </td>
-                <td>
-                  <span class="date">{{ formatDate(order.created_at) }}</span>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+        <!-- Modern Table -->
+        <div class="table-card">
+          <div class="table-responsive">
+            <table>
+              <thead>
+                <tr>
+                  <th>Order ID</th>
+                  <th>Customer</th>
+                  <th>Product</th>
+                  <th>Amount</th>
+                  <th>Status</th>
+                  <th>Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="order in orders" :key="order.id" class="order-row">
+                  <td>
+                    <span class="mono-badge">{{ order.id.substring(0, 8) }}...</span>
+                  </td>
+                  <td>
+                    <div class="customer-cell">
+                      <p class="customer-name">{{ order.customer_name || 'Anonymous User' }}</p>
+                      <p class="customer-email">{{ order.customer_email || 'No email provided' }}</p>
+                    </div>
+                  </td>
+                  <td>
+                    <span class="mono-text" title="Product ID">
+                      {{ order.product_id ? order.product_id.substring(0, 8) + '...' : 'N/A' }}
+                    </span>
+                  </td>
+                  <td>
+                    <span class="amount">{{ formatAmount(order.amount) }}</span>
+                  </td>
+                  <td>
+                    <span :class="['status-badge', getStatusClass(order.status)]">
+                      <span class="status-dot"></span>
+                      {{ order.status }}
+                    </span>
+                  </td>
+                  <td>
+                    <span class="date">{{ formatDate(order.created_at) }}</span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
 
         <!-- Pagination -->
-        <div v-if="totalPages > 1" class="pagination">
-          <button
-            @click="prevPage"
-            :disabled="currentPage === 1"
-            class="pagination-btn"
-          >
-            <ChevronLeft :size="18" />
-            Previous
-          </button>
-          <span class="pagination-info">Page {{ currentPage }} of {{ totalPages }} ({{ totalOrders }} total)</span>
-          <button
-            @click="nextPage"
-            :disabled="currentPage === totalPages"
-            class="pagination-btn"
-          >
-            Next
-            <ChevronRight :size="18" />
-          </button>
+        <div v-if="totalPages > 1" class="pagination-wrapper">
+          <div class="pagination">
+            <button
+              @click="prevPage"
+              :disabled="currentPage === 1"
+              class="pagination-btn"
+            >
+              <ChevronLeft :size="16" stroke-width="2" />
+              <span>Previous</span>
+            </button>
+            <span class="pagination-info">Page <b>{{ currentPage }}</b> of {{ totalPages }} <span class="text-muted">({{ totalOrders }} total)</span></span>
+            <button
+              @click="nextPage"
+              :disabled="currentPage === totalPages"
+              class="pagination-btn"
+            >
+              <span>Next</span>
+              <ChevronRight :size="16" stroke-width="2" />
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -131,10 +139,16 @@ const formatAmount = (amount: number | null) => {
   return `$${amount.toFixed(2)}`
 }
 
-const formatDate = (date: string) => new Date(date).toLocaleDateString()
+const formatDate = (date: string) => {
+  return new Date(date).toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric'
+  })
+}
 
 const getStatusClass = (status: string) => {
-  switch (status) {
+  switch (status?.toLowerCase()) {
     case 'completed': return 'status-completed'
     case 'confirmed': return 'status-confirmed'
     case 'pending': return 'status-pending'
@@ -161,18 +175,25 @@ onMounted(() => loadOrders())
 </script>
 
 <style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
 .page-container {
   min-height: 100vh;
-  background: #f9fafb;
+  background: #fcfcfd;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  color: #0f172a;
 }
 
+/* Header Styling */
 .header {
-  background: white;
-  border-bottom: 1px solid #e5e7eb;
-  padding: 20px 32px;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid #f1f5f9;
+  padding: 24px 32px;
   position: sticky;
   top: 0;
-  z-index: 10;
+  z-index: 20;
 }
 
 .header-content {
@@ -184,40 +205,48 @@ onMounted(() => loadOrders())
 }
 
 .page-title {
-  font-size: 28px;
+  font-size: 24px;
   font-weight: 700;
-  color: #111827;
-  margin: 0 0 4px 0;
+  color: #0f172a;
+  margin: 0 0 6px 0;
+  letter-spacing: -0.02em;
 }
 
 .page-subtitle {
   font-size: 14px;
-  color: #6b7280;
+  color: #64748b;
   margin: 0;
+  font-weight: 400;
 }
 
+/* Primary Button */
 .refresh-btn {
   display: flex;
   align-items: center;
   gap: 8px;
   padding: 10px 20px;
-  background: #4f46e5;
-  color: white;
-  border: none;
-  border-radius: 8px;
+  background: #111827;
+  color: #ffffff;
+  border: 1px solid transparent;
+  border-radius: 10px;
   font-weight: 500;
   font-size: 14px;
+  font-family: inherit;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .refresh-btn:hover:not(:disabled) {
-  background: #4338ca;
+  background: #1f2937;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transform: translateY(-1px);
 }
 
 .refresh-btn:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+  transform: none;
 }
 
 .content-wrapper {
@@ -229,39 +258,46 @@ onMounted(() => loadOrders())
 .orders-container {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 24px;
 }
 
-.orders-table {
-  background: white;
-  border: 1px solid #e5e7eb;
-  border-radius: 12px;
+/* Table Card */
+.table-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02), 0 4px 6px -2px rgba(0, 0, 0, 0.01);
   overflow: hidden;
+}
+
+.table-responsive {
+  overflow-x: auto;
 }
 
 table {
   width: 100%;
   border-collapse: collapse;
+  white-space: nowrap;
 }
 
 thead {
-  background: #f9fafb;
-  border-bottom: 1px solid #e5e7eb;
+  background: #f8fafc;
+  border-bottom: 1px solid #e2e8f0;
 }
 
 th {
-  padding: 16px 20px;
+  padding: 14px 24px;
   text-align: left;
   font-size: 12px;
   font-weight: 600;
-  color: #6b7280;
+  color: #64748b;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.04em;
 }
 
 tbody tr {
-  border-bottom: 1px solid #f3f4f6;
-  transition: background 0.2s;
+  border-bottom: 1px solid #f1f5f9;
+  transition: background-color 0.2s ease;
 }
 
 tbody tr:last-child {
@@ -269,92 +305,126 @@ tbody tr:last-child {
 }
 
 tbody tr:hover {
-  background: #f9fafb;
+  background: #f8fafc;
 }
 
 td {
-  padding: 16px 20px;
+  padding: 16px 24px;
   font-size: 14px;
+  vertical-align: middle;
 }
 
-.order-id {
-  font-family: monospace;
-  color: #111827;
+/* Typography & Cells */
+.mono-badge {
+  font-family: 'ui-monospace', 'SFMono-Regular', Menlo, Monaco, Consolas, monospace;
+  font-size: 13px;
+  background: #f1f5f9;
+  color: #475569;
+  padding: 4px 8px;
+  border-radius: 6px;
   font-weight: 500;
+}
+
+.mono-text {
+  font-family: 'ui-monospace', 'SFMono-Regular', Menlo, Monaco, Consolas, monospace;
+  font-size: 13px;
+  color: #64748b;
 }
 
 .customer-cell {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 4px;
 }
 
 .customer-name {
-  font-weight: 500;
-  color: #111827;
+  font-weight: 600;
+  color: #0f172a;
   margin: 0;
+  font-size: 14px;
 }
 
 .customer-email {
-  font-size: 12px;
-  color: #6b7280;
+  font-size: 13px;
+  color: #64748b;
   margin: 0;
-}
-
-.product-id {
-  color: #6b7280;
 }
 
 .amount {
   font-weight: 600;
-  color: #111827;
-}
-
-.status-badge {
-  padding: 4px 12px;
-  border-radius: 12px;
-  font-size: 12px;
-  font-weight: 500;
-  text-transform: capitalize;
-}
-
-.status-completed {
-  background: #d1fae5;
-  color: #065f46;
-}
-
-.status-confirmed {
-  background: #dbeafe;
-  color: #1e40af;
-}
-
-.status-pending {
-  background: #fef3c7;
-  color: #92400e;
-}
-
-.status-cancelled {
-  background: #fee2e2;
-  color: #991b1b;
-}
-
-.status-default {
-  background: #f3f4f6;
-  color: #6b7280;
+  color: #0f172a;
 }
 
 .date {
-  color: #6b7280;
+  color: #64748b;
+  font-size: 14px;
+}
+
+/* Status Badges */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: capitalize;
+  letter-spacing: 0.01em;
+}
+
+.status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+.status-completed {
+  background: #ecfdf5;
+  color: #059669;
+}
+.status-completed .status-dot { background: #10b981; }
+
+.status-confirmed {
+  background: #eff6ff;
+  color: #1d4ed8;
+}
+.status-confirmed .status-dot { background: #3b82f6; }
+
+.status-pending {
+  background: #fffbeb;
+  color: #d97706;
+}
+.status-pending .status-dot { background: #f59e0b; }
+
+.status-cancelled {
+  background: #fef2f2;
+  color: #dc2626;
+}
+.status-cancelled .status-dot { background: #ef4444; }
+
+.status-default {
+  background: #f1f5f9;
+  color: #64748b;
+}
+.status-default .status-dot { background: #94a3b8; }
+
+/* Pagination */
+.pagination-wrapper {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 8px;
 }
 
 .pagination {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  justify-content: space-between;
-  background: white;
-  border: 1px solid #e5e7eb;
+  gap: 16px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
   border-radius: 12px;
-  padding: 16px 20px;
+  padding: 8px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
 }
 
 .pagination-btn {
@@ -362,28 +432,35 @@ td {
   align-items: center;
   gap: 6px;
   padding: 8px 16px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid transparent;
   border-radius: 8px;
-  background: white;
+  background: transparent;
   font-size: 14px;
   font-weight: 500;
-  color: #374151;
+  color: #0f172a;
+  font-family: inherit;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.2s ease;
 }
 
 .pagination-btn:hover:not(:disabled) {
-  background: #f9fafb;
-  border-color: #d1d5db;
+  background: #f8fafc;
+  border-color: #e2e8f0;
 }
 
 .pagination-btn:disabled {
-  opacity: 0.5;
+  color: #94a3b8;
   cursor: not-allowed;
 }
 
 .pagination-info {
   font-size: 14px;
-  color: #6b7280;
+  color: #475569;
+  padding: 0 8px;
+}
+
+.text-muted {
+  color: #94a3b8;
+  font-weight: 400;
 }
 </style>
